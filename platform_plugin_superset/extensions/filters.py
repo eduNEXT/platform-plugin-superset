@@ -45,7 +45,6 @@ class AddSupersetTab(PipelineStep):
         context["sections"].append(section_data)
         return {
             "context": context,
-            "template": template_name,
         }
 
     def resource_string(self, path):
