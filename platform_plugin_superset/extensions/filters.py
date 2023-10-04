@@ -2,6 +2,7 @@
 Open edX Filters needed for Superset integration.
 """
 import pkg_resources
+from django.conf import settings
 from django.template import Context, Template
 from openedx_filters import PipelineStep
 from web_fragments.fragment import Fragment
@@ -20,6 +21,12 @@ class AddSupersetTab(PipelineStep):
             _ (str): instructor dashboard template name.
         """
         course = context["course"]
+        context.update(
+            {
+                "superset_url": settings.SUPERSET_URL,
+                "dashboard_slug": settings.SUPERSET_DASHBOARD_SLUG,
+            }
+        )
         template = Template(self.resource_string("static/html/superset.html"))
 
         html = template.render(Context(context))

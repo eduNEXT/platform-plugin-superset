@@ -37,3 +37,5 @@ def plugin_settings(settings):
     More info: https://github.com/edx/edx-platform/blob/master/openedx/core/djangoapps/plugins/README.rst
     """
     settings.MAKO_TEMPLATE_DIRS_BASE.append(ROOT_DIRECTORY / "templates")
+    settings.SUPERSET_URL = "http://superset.local.overhang.io:8088"
+    settings.SUPERSET_DASHBOARD_SLUG = "instructor-dashboard"

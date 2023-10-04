@@ -1,5 +1,16 @@
 {% load i18n %}
 
-<div class="email-notifier-instructor-wrapper">
-    {% trans "Superset Reports" %}
+<div class="email-notifier-instructor-wrapper" width="parent">
+    <div>
+        {% trans "Superset Reports" %}
+    </div>
+
+    <iframe
+        width="100%"
+        height="1000px"
+        seamless
+        frameBorder="0"
+        scrolling="no"
+        src="{{ superset_url }}/superset/dashboard/{{dashboard_slug}}?standalone=true">
+    </iframe>
 </div>
