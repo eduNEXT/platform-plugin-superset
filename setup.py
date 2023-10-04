@@ -174,4 +174,9 @@ setup(
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.8",
     ],
+    entry_points={
+        "lms.djangoapp": [
+            "platform_plugin_superset = platform_plugin_superset.apps:PlatformPluginSupersetConfig"
+        ],
+    },
 )
