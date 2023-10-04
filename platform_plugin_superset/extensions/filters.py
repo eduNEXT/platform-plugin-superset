@@ -14,7 +14,7 @@ BLOCK_CATEGORY = "superset"
 class AddSupersetTab(PipelineStep):
     """Add superset tab to instructor dashboard."""
 
-    def run_filter(self, context, template_name):  # pylint: disable=arguments-differ
+    def run_filter(self, context, template_name):  # pylint: disable=arguments-differ, unused-argument
         """Execute filter that modifies the instructor dashboard context.
         Args:
             context (dict): the context for the instructor dashboard.
