@@ -2,7 +2,7 @@
 
 <div class="email-notifier-instructor-wrapper" width="parent">
     <div>
-        {% trans "Superset Reports" %}
+        {{title}}
     </div>
 
     <iframe
@@ -11,6 +11,7 @@
         seamless
         frameBorder="0"
         scrolling="no"
-        src="{{ superset_url }}/superset/dashboard/{{dashboard_slug}}?standalone=true">
+        src="{{ superset_config.iframe_url }}">
     </iframe>
+
 </div>

@@ -10,6 +10,32 @@ from web_fragments.fragment import Fragment
 TEMPLATE_ABSOLUTE_PATH = "/instructor_dashboard/"
 BLOCK_CATEGORY = "superset"
 
+ASSET_CONFIG = {
+    "title": getattr(settings, "SUPERSET_TITLE", "Superset"),
+    "asset_type": getattr(settings, "SUPERSET_ASSET_TYPE", "slice"),
+    "asset_id": getattr(settings, "SUPERSET_ASSET_ID", "mjRp3DX3EYQ"),
+    "extra_url_params": getattr(settings, "SUPERSET_EXTRA_URL_PARAMS", {}),
+    "superset_url": getattr(settings, "SUPERSET_URL", ""),
+}
+
+def process_config(config):
+    if config.get("asset_type") == "dashboard":
+        config["iframe_url"] = "{superset_url}/superset/dashboard/{asset_id}?standalone=3&show_filters=0&expand_filters=0".format(
+            **config
+        )
+    if config.get("asset_type") == "slice":
+        config["iframe_url"] = "{superset_url}/superset/explore/p/{asset_id}?standalone=1".format(
+            **config
+        )
+
+    for extra_url_param in config["extra_url_params"]:
+        config["iframe_url"] += "&{}={}".format(
+            extra_url_param, config["extra_url_params"][extra_url_param]
+        )
+
+    return config
+
+
 
 class AddSupersetTab(PipelineStep):
     """Add superset tab to instructor dashboard."""
@@ -23,8 +49,7 @@ class AddSupersetTab(PipelineStep):
         course = context["course"]
         context.update(
             {
-                "superset_url": settings.SUPERSET_URL,
-                "dashboard_slug": settings.SUPERSET_DASHBOARD_SLUG,
+                "superset_config": process_config(ASSET_CONFIG),
             }
         )
         template = Template(self.resource_string("static/html/superset.html"))
