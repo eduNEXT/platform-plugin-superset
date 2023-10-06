@@ -1,17 +1,35 @@
 {% load i18n %}
 
+<script src="https://unpkg.com/@superset-ui/embedded-sdk"></script>
+
 <div class="email-notifier-instructor-wrapper" width="parent">
-    <div>
-        {{title}}
+    <div>{{title}}</div>
+
+    <div id="superset-embedded-container" style="display: none;">
+
+        <script type="text/javascript">
+            supersetEmbeddedSdk.embedDashboard({
+                id: "{{dashboard_id}}", // given by the Superset embedding UI
+                supersetDomain: "http://superset.local.overhang.io:8088", // your Superset instance
+                mountPoint: document.getElementById("superset-embedded-container"), // any html element that can contain an iframe
+                fetchGuestToken: () => {return "{{superset_token}}"},
+                dashboardUiConfig: {
+                    // dashboard UI config: hideTitle, hideTab, hideChartControls, filters.visible, filters.expanded (optional)
+                    hideTitle: true,
+                    filters: {
+                        expanded: false,
+                    },
+                    hideTab: true,
+                    hideChartControls: true,
+                    hideFilters: true,
+                },
+            }).then((dashboard) => {
+                mountPoint = document.getElementById("superset-embedded-container");
+                mountPoint.children[0].style.height = "720px";
+                mountPoint.children[0].style.width = "100%";
+                mountPoint.style.display = "block";
+            })
+        </script>
+
     </div>
-
-    <iframe
-        width="100%"
-        height="1000px"
-        seamless
-        frameBorder="0"
-        scrolling="no"
-        src="{{ superset_config.iframe_url }}">
-    </iframe>
-
 </div>
