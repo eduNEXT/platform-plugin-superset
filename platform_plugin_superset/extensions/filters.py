@@ -1,15 +1,15 @@
 """
 Open edX Filters needed for Superset integration.
 """
+import os
+
 import pkg_resources
+from crum import get_current_user
 from django.conf import settings
 from django.template import Context, Template
 from openedx_filters import PipelineStep
-from web_fragments.fragment import Fragment
-import os
-from crum import get_current_user
-
 from supersetapiclient.client import SupersetClient
+from web_fragments.fragment import Fragment
 
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
@@ -17,7 +17,10 @@ TEMPLATE_ABSOLUTE_PATH = "/instructor_dashboard/"
 BLOCK_CATEGORY = "superset"
 
 
-def load_guest_token(user, course):
+def generate_guest_token(user, course):
+    """
+    Generate a Superset guest token for the user.
+    """
     SUPERSET_CONFIG = getattr(settings, "SUPERSET_CONFIG", {})
     superset_internal_host = SUPERSET_CONFIG.get("service_url", "http://superset:8088/")
     superset_username = SUPERSET_CONFIG.get("username")
@@ -40,14 +43,12 @@ def load_guest_token(user, course):
             "first_name": "John",
             "last_name": "Doe",
         },
-        "resources": [
-            {"type": "dashboard", "id": dashboard_id}
-        ],
+        "resources": [{"type": "dashboard", "id": dashboard_id}],
         "rls": [
             {"clause": f"org = '{(course.org)}'"},
             {"clause": f"course_name = '{(course.display_name)}'"},
             {"clause": f"course_run = '{(course_run)}'"},
-            ]
+        ],
     }
 
     response = client.session.post(
@@ -73,7 +74,7 @@ class AddSupersetTab(PipelineStep):
         course = context["course"]
 
         user = get_current_user()
-        superset_token, dashboard_id = load_guest_token(user, course)
+        superset_token, dashboard_id = generate_guest_token(user, course)
         context.update(
             {
                 "superset_token": superset_token,
