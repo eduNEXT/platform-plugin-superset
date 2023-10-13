@@ -18,13 +18,16 @@ BLOCK_CATEGORY = "superset"
 
 
 def load_guest_token(user, course):
-    superset_host = "http://superset:8088/"
-    superset_username = "9T2Oz1iw0455"
-    superset_password = "SMVWlysdQH1l7NFQMKouJ9NO"
-    dashboard_id = "776a7457-ffb1-4aa1-802e-17e8a00fbcb9"
+    SUPERSET_CONFIG = getattr(settings, "SUPERSET_CONFIG", {})
+    superset_internal_host = SUPERSET_CONFIG.get("service_url", "http://superset:8088/")
+    superset_username = SUPERSET_CONFIG.get("username")
+    superset_password = SUPERSET_CONFIG.get("password")
+
+    INSTRUCTOR_DASHBOARD_CONFIG = getattr(settings, "SUPERSET_INSTRUCTOR_DASHBOARD", {})
+    dashboard_id = INSTRUCTOR_DASHBOARD_CONFIG.get("dashboard_uuid")
 
     client = SupersetClient(
-        host=superset_host,
+        host=superset_internal_host,
         username=superset_username,
         password=superset_password,
     )
@@ -48,7 +51,7 @@ def load_guest_token(user, course):
     }
 
     response = client.session.post(
-        url=superset_host + "api/v1/security/guest_token/",
+        url=superset_internal_host + "api/v1/security/guest_token/",
         json=data,
         headers={"Content-Type": "application/json"},
     )
@@ -75,6 +78,7 @@ class AddSupersetTab(PipelineStep):
             {
                 "superset_token": superset_token,
                 "dashboard_id": dashboard_id,
+                "superset_url": settings.SUPERSET_CONFIG.get("host"),
             }
         )
         template = Template(self.resource_string("static/html/superset.html"))

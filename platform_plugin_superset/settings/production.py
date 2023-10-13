@@ -8,3 +8,11 @@ def plugin_settings(settings):  # pylint: disable=unused-argument
     Set of plugin settings used by the Open Edx platform.
     More info: https://github.com/edx/edx-platform/blob/master/openedx/core/djangoapps/plugins/README.rst
     """
+    settings.SUPERSET_CONFIG = getattr(settings, "ENV_TOKENS", {}).get(
+        "SUPERSET_CONFIG",
+        settings.SUPERSET_CONFIG
+    )
+    settings.SUPERSET_INSTRUCTOR_DASHBOARD = getattr(settings, "ENV_TOKENS", {}).get(
+        "SUPERSET_INSTRUCTOR_DASHBOARD",
+        settings.SUPERSET_INSTRUCTOR_DASHBOARD
+    )
