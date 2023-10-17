@@ -6,3 +6,6 @@ openedx-filters
 web_fragments
 superset-api-client
 django_crum
+xblock
+web_fragments
+xblock_utils

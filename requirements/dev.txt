@@ -4,6 +4,10 @@
 #
 #    make upgrade
 #
+appdirs==1.4.4
+    # via
+    #   -r requirements/quality.txt
+    #   fs
 asgiref==3.7.2
     # via
     #   -r requirements/quality.txt
@@ -13,8 +17,17 @@ astroid==2.15.8
     #   -r requirements/quality.txt
     #   pylint
     #   pylint-celery
-black==23.9.1
+black==23.10.0
     # via -r requirements/dev.in
+boto3==1.28.64
+    # via
+    #   -r requirements/quality.txt
+    #   fs-s3fs
+botocore==1.31.64
+    # via
+    #   -r requirements/quality.txt
+    #   boto3
+    #   s3transfer
 build==1.0.3
     # via
     #   -r requirements/pip-tools.txt
@@ -49,8 +62,9 @@ code-annotations==1.5.0
 coverage[toml]==7.3.2
     # via
     #   -r requirements/quality.txt
+    #   coverage
     #   pytest-cov
-diff-cover==7.7.0
+diff-cover==8.0.0
     # via -r requirements/dev.in
 dill==0.3.7
     # via
@@ -66,6 +80,7 @@ django==3.2.22
     #   -r requirements/quality.txt
     #   django-crum
     #   edx-i18n-tools
+    #   openedx-django-pyfs
     #   openedx-filters
 django-crum==0.7.9
     # via -r requirements/quality.txt
@@ -82,6 +97,16 @@ filelock==3.12.4
     #   -r requirements/ci.txt
     #   tox
     #   virtualenv
+fs==2.4.16
+    # via
+    #   -r requirements/quality.txt
+    #   fs-s3fs
+    #   openedx-django-pyfs
+    #   xblock
+fs-s3fs==1.1.1
+    # via
+    #   -r requirements/quality.txt
+    #   openedx-django-pyfs
 idna==3.4
     # via
     #   -r requirements/quality.txt
@@ -103,16 +128,35 @@ jinja2==3.1.2
     #   -r requirements/quality.txt
     #   code-annotations
     #   diff-cover
+jmespath==1.0.1
+    # via
+    #   -r requirements/quality.txt
+    #   boto3
+    #   botocore
+lazy==1.6
+    # via
+    #   -r requirements/quality.txt
+    #   xblock
 lazy-object-proxy==1.9.0
     # via
     #   -r requirements/quality.txt
     #   astroid
 lxml==4.9.3
-    # via edx-i18n-tools
+    # via
+    #   -r requirements/quality.txt
+    #   edx-i18n-tools
+    #   xblock
+mako==1.2.4
+    # via
+    #   -r requirements/quality.txt
+    #   xblock
+    #   xblock-utils
 markupsafe==2.1.3
     # via
     #   -r requirements/quality.txt
     #   jinja2
+    #   mako
+    #   xblock
 mccabe==0.7.0
     # via
     #   -r requirements/quality.txt
@@ -123,6 +167,10 @@ oauthlib==3.2.2
     # via
     #   -r requirements/quality.txt
     #   requests-oauthlib
+openedx-django-pyfs==3.4.0
+    # via
+    #   -r requirements/quality.txt
+    #   xblock
 openedx-filters==1.6.0
     # via -r requirements/quality.txt
 packaging==23.2
@@ -164,7 +212,7 @@ py==1.11.0
     # via
     #   -r requirements/ci.txt
     #   tox
-pycodestyle==2.11.0
+pycodestyle==2.11.1
     # via -r requirements/quality.txt
 pydocstyle==6.3.0
     # via -r requirements/quality.txt
@@ -203,6 +251,11 @@ pytest-cov==4.1.0
     # via -r requirements/quality.txt
 pytest-django==4.5.2
     # via -r requirements/quality.txt
+python-dateutil==2.8.2
+    # via
+    #   -r requirements/quality.txt
+    #   botocore
+    #   xblock
 python-slugify==8.0.1
     # via
     #   -r requirements/quality.txt
@@ -211,12 +264,14 @@ pytz==2023.3.post1
     # via
     #   -r requirements/quality.txt
     #   django
+    #   xblock
 pyyaml==6.0.1
     # via
     #   -r requirements/quality.txt
     #   code-annotations
     #   edx-i18n-tools
     #   superset-api-client
+    #   xblock
 requests==2.31.0
     # via
     #   -r requirements/quality.txt
@@ -226,11 +281,23 @@ requests-oauthlib==1.3.1
     # via
     #   -r requirements/quality.txt
     #   superset-api-client
+s3transfer==0.7.0
+    # via
+    #   -r requirements/quality.txt
+    #   boto3
+simplejson==3.19.2
+    # via
+    #   -r requirements/quality.txt
+    #   xblock
+    #   xblock-utils
 six==1.16.0
     # via
     #   -r requirements/ci.txt
     #   -r requirements/quality.txt
     #   edx-lint
+    #   fs
+    #   fs-s3fs
+    #   python-dateutil
     #   tox
 snowballstemmer==2.2.0
     # via
@@ -281,16 +348,24 @@ typing-extensions==4.8.0
     #   astroid
     #   black
     #   pylint
-urllib3==2.0.6
+urllib3==1.26.17
     # via
     #   -r requirements/quality.txt
+    #   botocore
     #   requests
 virtualenv==20.24.5
     # via
     #   -r requirements/ci.txt
     #   tox
 web-fragments==2.1.0
-    # via -r requirements/quality.txt
+    # via
+    #   -r requirements/quality.txt
+    #   xblock
+    #   xblock-utils
+webob==1.8.7
+    # via
+    #   -r requirements/quality.txt
+    #   xblock
 wheel==0.41.2
     # via
     #   -r requirements/pip-tools.txt
@@ -299,6 +374,13 @@ wrapt==1.15.0
     # via
     #   -r requirements/quality.txt
     #   astroid
+xblock[django]==1.8.1
+    # via
+    #   -r requirements/quality.txt
+    #   xblock
+    #   xblock-utils
+xblock-utils==4.0.0
+    # via -r requirements/quality.txt
 zipp==3.17.0
     # via
     #   -r requirements/pip-tools.txt
