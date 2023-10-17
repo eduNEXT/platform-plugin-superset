@@ -178,5 +178,8 @@ setup(
         "lms.djangoapp": [
             "platform_plugin_superset = platform_plugin_superset.apps:PlatformPluginSupersetConfig"
         ],
+        "xblock.v1": [
+            "superset = platform_plugin_superset.superset_xblock:SupersetXBlock",
+        ],
     },
 )

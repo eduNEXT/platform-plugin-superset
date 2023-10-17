@@ -59,7 +59,8 @@ def generate_guest_token(user, course):
     filters = default_filters + extra_filters_format
 
     formatted_filters = [
-        filter.format(course=course, course_run=course_run, user=user) for filter in filters
+        filter.format(course=course, course_run=course_run, user=user)
+        for filter in filters
     ]
 
     data = {
@@ -69,9 +70,7 @@ def generate_guest_token(user, course):
             "last_name": "Doe",
         },
         "resources": [{"type": "dashboard", "id": dashboard_id}],
-        "rls": [
-            {"clause": filter} for filter in formatted_filters
-        ],
+        "rls": [{"clause": filter} for filter in formatted_filters],
     }
 
     try:
@@ -115,7 +114,6 @@ class AddSupersetTab(PipelineStep):
         else:
             context.update(
                 {
-                    "error_message": "Superset is not configured properly. Please contact your system administrator.",
                     "exception": dashboard_id,
                 }
             )
