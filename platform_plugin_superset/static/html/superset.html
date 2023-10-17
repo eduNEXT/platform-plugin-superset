@@ -6,7 +6,7 @@
     <div>{{title}}</div>
 
     {% if dashboard_id %}
-    <div id="superset-embedded-container" style="display: none">
+    <div id="superset-embedded-container">
         <script type="text/javascript">
             supersetEmbeddedSdk
                 .embedDashboard({
@@ -29,9 +29,10 @@
                 })
                 .then((dashboard) => {
                     mountPoint = document.getElementById("superset-embedded-container");
-                    mountPoint.children[0].style.height = "720px";
-                    mountPoint.children[0].style.width = "100%";
-                    mountPoint.style.display = "block";
+                    /*
+                    Perform extra operations on the dashboard object or the container
+                    when the dashboard is loaded
+                    */
                 });
         </script>
     </div>
