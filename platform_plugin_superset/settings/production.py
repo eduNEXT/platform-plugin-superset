@@ -14,3 +14,6 @@ def plugin_settings(settings):
     settings.SUPERSET_INSTRUCTOR_DASHBOARD = getattr(settings, "ENV_TOKENS", {}).get(
         "SUPERSET_INSTRUCTOR_DASHBOARD", settings.SUPERSET_INSTRUCTOR_DASHBOARD
     )
+    settings.SUPERSET_EXTRA_FILTERS_FORMAT = getattr(settings, "ENV_TOKENS", {}).get(
+        "SUPERSET_EXTRA_FILTERS_FORMAT", settings.SUPERSET_EXTRA_FILTERS_FORMAT
+    )

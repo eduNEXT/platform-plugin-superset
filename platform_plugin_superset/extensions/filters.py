@@ -48,6 +48,20 @@ def generate_guest_token(user, course):
 
     course_run = course.children[0].course_key.run
 
+    extra_filters_format = getattr(settings, "SUPERSET_EXTRA_FILTERS_FORMAT", [])
+
+    default_filters = [
+        "org = '{course.org}'",
+        "course_name = '{course.display_name}'",
+        "course_run = '{course_run}'",
+    ]
+
+    filters = default_filters + extra_filters_format
+
+    formatted_filters = [
+        filter.format(course=course, course_run=course_run, user=user) for filter in filters
+    ]
+
     data = {
         "user": {
             "username": user.username,
@@ -56,9 +70,7 @@ def generate_guest_token(user, course):
         },
         "resources": [{"type": "dashboard", "id": dashboard_id}],
         "rls": [
-            {"clause": f"org = '{(course.org)}'"},
-            {"clause": f"course_name = '{(course.display_name)}'"},
-            {"clause": f"course_run = '{(course_run)}'"},
+            {"clause": filter} for filter in formatted_filters
         ],
     }
 
