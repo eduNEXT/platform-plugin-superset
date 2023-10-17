@@ -20,20 +20,31 @@ BLOCK_CATEGORY = "superset"
 def generate_guest_token(user, course):
     """
     Generate a Superset guest token for the user.
+
+    Args:
+        user: User object.
+        course: Course object.
+
+    Returns:
+        tuple: Superset guest token and dashboard id.
+        or None, exception if Superset is missconfigured or cannot generate guest token.
     """
-    SUPERSET_CONFIG = getattr(settings, "SUPERSET_CONFIG", {})
-    superset_internal_host = SUPERSET_CONFIG.get("service_url", "http://superset:8088/")
-    superset_username = SUPERSET_CONFIG.get("username")
-    superset_password = SUPERSET_CONFIG.get("password")
+    superset_config = getattr(settings, "SUPERSET_CONFIG", {})
+    superset_internal_host = superset_config.get("service_url", "http://superset:8088/")
+    superset_username = superset_config.get("username")
+    superset_password = superset_config.get("password")
 
-    INSTRUCTOR_DASHBOARD_CONFIG = getattr(settings, "SUPERSET_INSTRUCTOR_DASHBOARD", {})
-    dashboard_id = INSTRUCTOR_DASHBOARD_CONFIG.get("dashboard_uuid")
+    instructor_dashboard_config = getattr(settings, "SUPERSET_INSTRUCTOR_DASHBOARD", {})
+    dashboard_id = instructor_dashboard_config.get("dashboard_uuid")
 
-    client = SupersetClient(
-        host=superset_internal_host,
-        username=superset_username,
-        password=superset_password,
-    )
+    try:
+        client = SupersetClient(
+            host=superset_internal_host,
+            username=superset_username,
+            password=superset_password,
+        )
+    except Exception as exc:
+        return None, exc
 
     course_run = course.children[0].course_key.run
 
@@ -51,13 +62,18 @@ def generate_guest_token(user, course):
         ],
     }
 
-    response = client.session.post(
-        url=superset_internal_host + "api/v1/security/guest_token/",
-        json=data,
-        headers={"Content-Type": "application/json"},
-    )
+    try:
+        response = client.session.post(
+            url=f"{superset_internal_host}api/v1/security/guest_token/",
+            json=data,
+            headers={"Content-Type": "application/json"},
+        )
+        token = response.json()["token"]
 
-    return response.json()["token"], dashboard_id
+        return token, dashboard_id
+    except Exception as exc:
+        return None, exc
+
 
 
 class AddSupersetTab(PipelineStep):
@@ -75,13 +91,22 @@ class AddSupersetTab(PipelineStep):
 
         user = get_current_user()
         superset_token, dashboard_id = generate_guest_token(user, course)
-        context.update(
-            {
-                "superset_token": superset_token,
-                "dashboard_id": dashboard_id,
-                "superset_url": settings.SUPERSET_CONFIG.get("host"),
-            }
-        )
+
+        if superset_token:
+            context.update(
+                {
+                    "superset_token": superset_token,
+                    "dashboard_id": dashboard_id,
+                    "superset_url": settings.SUPERSET_CONFIG.get("host"),
+                }
+            )
+        else:
+            context.update(
+                {
+                    "error_message": "Superset is not configured properly. Please contact your system administrator.",
+                    "exception": dashboard_id,
+                }
+            )
         template = Template(self.resource_string("static/html/superset.html"))
 
         html = template.render(Context(context))

@@ -5,6 +5,7 @@
 <div class="email-notifier-instructor-wrapper" width="parent">
     <div>{{title}}</div>
 
+    {% if dashboard_id %}
     <div id="superset-embedded-container" style="display: none">
         <script type="text/javascript">
             supersetEmbeddedSdk
@@ -34,4 +35,7 @@
                 });
         </script>
     </div>
+    {% else %}
+    <p>{{error_message}}</p>
+    {% endif %}
 </div>
