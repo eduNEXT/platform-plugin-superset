@@ -7,15 +7,14 @@
 
     {% if dashboard_id %}
     <div id="superset-embedded-container">
-        <script type="text/javascript">
+    </div>
+    <script type="text/javascript">
             supersetEmbeddedSdk
                 .embedDashboard({
                     id: "{{dashboard_id}}", // given by the Superset embedding UI
                     supersetDomain: "{{superset_url}}", // your Superset instance
                     mountPoint: document.getElementById("superset-embedded-container"), // any html element that can contain an iframe
-                    fetchGuestToken: () => {
-                        return "{{superset_token}}";
-                    },
+                    fetchGuestToken: () => "{{superset_token}}",
                     dashboardUiConfig: {
                         // dashboard UI config: hideTitle, hideTab, hideChartControls, filters.visible, filters.expanded (optional)
                         hideTitle: true,
@@ -35,7 +34,6 @@
                     */
                 });
         </script>
-    </div>
     {% else %}
     <p>{{error_message}}</p>
     {% endif %}
