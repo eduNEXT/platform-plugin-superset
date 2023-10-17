@@ -43,7 +43,7 @@ def generate_guest_token(user, course):
             username=superset_username,
             password=superset_password,
         )
-    except Exception as exc:
+    except Exception as exc:  # pylint: disable=broad-except
         return None, exc
 
     course_run = course.children[0].course_key.run
@@ -68,12 +68,12 @@ def generate_guest_token(user, course):
             json=data,
             headers={"Content-Type": "application/json"},
         )
+        response.raise_for_status()
         token = response.json()["token"]
 
         return token, dashboard_id
-    except Exception as exc:
+    except Exception as exc:  # pylint: disable=broad-except
         return None, exc
-
 
 
 class AddSupersetTab(PipelineStep):
