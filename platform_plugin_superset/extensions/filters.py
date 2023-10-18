@@ -30,7 +30,7 @@ def update_context(
 
     if user is None:
         user = get_current_user()
-    superset_token, dashboard_id = generate_guest_token(
+    superset_token, dashboard_uuid = generate_guest_token(
         user=user,
         course=course,
         superset_config=superset_config,
@@ -42,14 +42,14 @@ def update_context(
         context.update(
             {
                 "superset_token": superset_token,
-                "dashboard_id": dashboard_id,
+                "dashboard_uuid": dashboard_uuid,
                 "superset_url": settings.SUPERSET_CONFIG.get("host"),
             }
         )
     else:
         context.update(
             {
-                "exception": dashboard_id,
+                "exception": dashboard_uuid,
             }
         )
 
@@ -89,8 +89,13 @@ def generate_guest_token(user, course, superset_config, dashboard_uuid, filters)
     data = {
         "user": {
             "username": user.username,
-            "first_name": "John",
-            "last_name": "Doe",
+            # We can send more info about the user to superset
+            # but Open edX only provides the full name. For now is not needed
+            # and doesn't add any value so we don't send it.
+            # {
+            #    "first_name": "John",
+            #    "last_name": "Doe",
+            # }
         },
         "resources": [{"type": "dashboard", "id": dashboard_uuid}],
         "rls": [{"clause": filter} for filter in formatted_filters],
@@ -147,15 +152,6 @@ class AddSupersetTab(PipelineStep):
 
         frag.add_css(self.resource_string("static/css/superset.css"))
         frag.add_javascript(self.resource_string("static/js/embed_dashboard.js"))
-
-        frag.initialize_js(
-            "embedDashboard",
-            json_args={
-                "dashboard_id": dashboard_uuid,
-                "superset_url": context.get("superset_url"),
-                "superset_token": context.get("superset_token"),
-            },
-        )
 
         section_data = {
             "fragment": frag,
