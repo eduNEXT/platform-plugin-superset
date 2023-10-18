@@ -12,6 +12,8 @@ from xblock.core import XBlock
 from xblock.fields import List, Scope, String
 from xblockutils.resources import ResourceLoader
 
+import json
+
 from platform_plugin_superset.extensions.filters import update_context
 from platform_plugin_superset.utils import _
 
@@ -28,42 +30,51 @@ class SupersetXBlock(XBlock):
 
     display_name = String(
         display_name=_("Display name"),
+        help=_("Display name"),
         default="Superset Dashboard",
         scope=Scope.settings,
     )
 
     superset_internal_url = String(
         display_name=_("Superset URL"),
+        help=_("Superset internal URL to generate authentication information."
+               "Contact with your Open edX operator for more information."
+               ),
         default="http://superset:8088/",
         scope=Scope.settings,
     )
 
     superset_url = String(
         display_name=_("Superset URL"),
+        help=_("Superset URL to embed the dashboard."),
         default="http://superset.local.overhang.io:8088/",
         scope=Scope.settings,
     )
 
     superset_username = String(
         display_name=_("Superset Username"),
+        help=_("Superset Username"),
         default="",
         scope=Scope.settings,
     )
 
     superset_password = String(
         display_name=_("Superset Password"),
+        help=_("Superset Password"),
         default="",
         scope=Scope.settings,
     )
 
     dashboard_uuid = String(
         display_name=_("Dashboard UUID"),
+        help=_("The ID of the dashboard to embed. Available in the embed dashboard UI."),
         default="1d6bf904-f53f-47fd-b1c9-6cd7e284d286",
         scope=Scope.settings,
     )
 
     filters = List(
         display_name=_("Filters"),
+        help=_("Filters to apply to the dashboard."),
         default=[],
         scope=Scope.settings,
     )
@@ -163,7 +174,22 @@ class SupersetXBlock(XBlock):
         """
         Render the view shown to course authors.
         """
-        context = {}
+        context = {
+            "display_name": self.display_name,
+            "superset_internal_url": self.superset_internal_url,
+            "superset_url": self.superset_url,
+            "superset_username": self.superset_username,
+            "superset_password": self.superset_password,
+            "dashboard_uuid": self.dashboard_uuid,
+            "filters": self.filters,
+            "display_name_field": self.fields["display_name"],
+            "superset_internal_url_field": self.fields["superset_internal_url"],
+            "superset_url_field": self.fields["superset_url"],
+            "superset_username_field": self.fields["superset_username"],
+            "superset_password_field": self.fields["superset_password"],
+            "dashboard_uuid_field": self.fields["dashboard_uuid"],
+            "filters_field": self.fields["filters"],
+        }
 
         frag = Fragment()
         frag.add_content(
@@ -187,7 +213,15 @@ class SupersetXBlock(XBlock):
         """
         Save studio updates.
         """
+        print(data)
         self.display_name = data.get("display_name")
+        self.superset_internal_url = data.get("superset_internal_url")
+        self.superset_url = data.get("superset_url")
+        self.superset_username = data.get("superset_username")
+        self.superset_password = data.get("superset_password")
+        self.dashboard_uuid = data.get("dashboard_uuid")
+        # filters = json.loads(filters)
+        # self.filters = data.get("filters")
 
     @staticmethod
     def get_fullname(user) -> Tuple[str, str]:
