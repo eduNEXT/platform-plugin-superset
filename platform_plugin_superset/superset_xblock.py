@@ -75,7 +75,9 @@ class SupersetXBlock(XBlock):
 
     filters = List(
         display_name=_("Filters"),
-        help=_("Filters to apply to the dashboard."),
+        help=_(
+            "Comma separated list of filters to use. E.g: org='edX', user='student'."
+        ),
         default=[],
         scope=Scope.settings,
     )
@@ -178,6 +180,14 @@ class SupersetXBlock(XBlock):
         """
         Render the view shown to course authors.
         """
+        filters = (
+            str(self.filters)
+            .replace("'", "")
+            .replace('"', "")
+            .replace("[", "")
+            .replace("]", "")
+            .strip()
+        )
         context = {
             "display_name": self.display_name,
             "superset_internal_url": self.superset_internal_url,
@@ -185,7 +195,7 @@ class SupersetXBlock(XBlock):
             "superset_username": self.superset_username,
             "superset_password": self.superset_password,
             "dashboard_uuid": self.dashboard_uuid,
-            "filters": self.filters,
+            "filters": filters,
             "display_name_field": self.fields[  # pylint: disable=unsubscriptable-object
                 "display_name"
             ],
@@ -231,15 +241,23 @@ class SupersetXBlock(XBlock):
         """
         Save studio updates.
         """
-        print(data)
         self.display_name = data.get("display_name")
         self.superset_internal_url = data.get("superset_internal_url")
         self.superset_url = data.get("superset_url")
         self.superset_username = data.get("superset_username")
         self.superset_password = data.get("superset_password")
         self.dashboard_uuid = data.get("dashboard_uuid")
-        # filters = json.loads(filters)
-        # self.filters = data.get("filters")
+        filters = data.get("filters")
+        if filters:
+            self.filters = []
+            for rlsf in filters.split(","):
+                rlsf = rlsf.strip()
+                try:
+                    field, value = rlsf.split("=")
+                    self.filters.append(f"{field}='{value}'")
+                except ValueError:
+                    # Handle cases of trailing commas
+                    pass
 
     @staticmethod
     def get_fullname(user) -> Tuple[str, str]:
