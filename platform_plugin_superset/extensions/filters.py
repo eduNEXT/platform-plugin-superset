@@ -17,7 +17,46 @@ TEMPLATE_ABSOLUTE_PATH = "/instructor_dashboard/"
 BLOCK_CATEGORY = "superset"
 
 
-def generate_guest_token(user, course):
+def update_context(
+    context, superset_config={}, dashboard_uuid="", filters=[], user=None
+):
+    """
+    Update context with superset token and dashboard id.
+
+    Args:
+        context (dict): the context for the instructor dashboard. It must include a course object
+    """
+    course = context["course"]
+
+    if user is None:
+        user = get_current_user()
+    superset_token, dashboard_id = generate_guest_token(
+        user=user,
+        course=course,
+        superset_config=superset_config,
+        dashboard_uuid=dashboard_uuid,
+        filters=filters,
+    )
+
+    if superset_token:
+        context.update(
+            {
+                "superset_token": superset_token,
+                "dashboard_id": dashboard_id,
+                "superset_url": settings.SUPERSET_CONFIG.get("host"),
+            }
+        )
+    else:
+        context.update(
+            {
+                "exception": dashboard_id,
+            }
+        )
+
+    return context
+
+
+def generate_guest_token(user, course, superset_config, dashboard_uuid, filters):
     """
     Generate a Superset guest token for the user.
 
@@ -29,13 +68,12 @@ def generate_guest_token(user, course):
         tuple: Superset guest token and dashboard id.
         or None, exception if Superset is missconfigured or cannot generate guest token.
     """
-    superset_config = getattr(settings, "SUPERSET_CONFIG", {})
+    if not superset_config:
+        superset_config = getattr(settings, "SUPERSET_CONFIG", {})
+
     superset_internal_host = superset_config.get("service_url", "http://superset:8088/")
     superset_username = superset_config.get("username")
     superset_password = superset_config.get("password")
-
-    instructor_dashboard_config = getattr(settings, "SUPERSET_INSTRUCTOR_DASHBOARD", {})
-    dashboard_id = instructor_dashboard_config.get("dashboard_uuid")
 
     try:
         client = SupersetClient(
@@ -46,22 +84,7 @@ def generate_guest_token(user, course):
     except Exception as exc:  # pylint: disable=broad-except
         return None, exc
 
-    course_run = course.children[0].course_key.run
-
-    extra_filters_format = getattr(settings, "SUPERSET_EXTRA_FILTERS_FORMAT", [])
-
-    default_filters = [
-        "org = '{course.org}'",
-        "course_name = '{course.display_name}'",
-        "course_run = '{course_run}'",
-    ]
-
-    filters = default_filters + extra_filters_format
-
-    formatted_filters = [
-        filter.format(course=course, course_run=course_run, user=user)
-        for filter in filters
-    ]
+    formatted_filters = [filter.format(course=course, user=user) for filter in filters]
 
     data = {
         "user": {
@@ -69,7 +92,7 @@ def generate_guest_token(user, course):
             "first_name": "John",
             "last_name": "Doe",
         },
-        "resources": [{"type": "dashboard", "id": dashboard_id}],
+        "resources": [{"type": "dashboard", "id": dashboard_uuid}],
         "rls": [{"clause": filter} for filter in formatted_filters],
     }
 
@@ -82,7 +105,7 @@ def generate_guest_token(user, course):
         response.raise_for_status()
         token = response.json()["token"]
 
-        return token, dashboard_id
+        return token, dashboard_uuid
     except Exception as exc:  # pylint: disable=broad-except
         return None, exc
 
@@ -100,23 +123,23 @@ class AddSupersetTab(PipelineStep):
         """
         course = context["course"]
 
-        user = get_current_user()
-        superset_token, dashboard_id = generate_guest_token(user, course)
+        instructor_dashboard_config = getattr(
+            settings, "SUPERSET_INSTRUCTOR_DASHBOARD", {}
+        )
+        dashboard_uuid = instructor_dashboard_config.get("dashboard_uuid")
 
-        if superset_token:
-            context.update(
-                {
-                    "superset_token": superset_token,
-                    "dashboard_id": dashboard_id,
-                    "superset_url": settings.SUPERSET_CONFIG.get("host"),
-                }
-            )
-        else:
-            context.update(
-                {
-                    "exception": dashboard_id,
-                }
-            )
+        extra_filters_format = getattr(settings, "SUPERSET_EXTRA_FILTERS_FORMAT", [])
+
+        default_filters = [
+            "org = '{course.org}'",
+            "course_name = '{course.display_name}'",
+        ]
+
+        filters = default_filters + extra_filters_format
+
+        context = update_context(
+            context, dashboard_uuid=dashboard_uuid, filters=filters
+        )
         template = Template(self.resource_string("static/html/superset.html"))
 
         html = template.render(Context(context))

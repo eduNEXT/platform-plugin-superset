@@ -6,11 +6,13 @@ from typing import Tuple
 
 import pkg_resources
 from django.utils import translation
+from django.conf import settings
 from web_fragments.fragment import Fragment
 from xblock.core import XBlock
-from xblock.fields import Scope, String
+from xblock.fields import List, Scope, String
 from xblockutils.resources import ResourceLoader
 
+from platform_plugin_superset.extensions.filters import update_context
 from platform_plugin_superset.utils import _
 
 log = logging.getLogger(__name__)
@@ -27,6 +29,42 @@ class SupersetXBlock(XBlock):
     display_name = String(
         display_name=_("Display name"),
         default="Superset Dashboard",
+        scope=Scope.settings,
+    )
+
+    superset_internal_url = String(
+        display_name=_("Superset URL"),
+        default="http://superset:8088/",
+        scope=Scope.settings,
+    )
+
+    superset_url = String(
+        display_name=_("Superset URL"),
+        default="http://superset.local.overhang.io:8088/",
+        scope=Scope.settings,
+    )
+
+    superset_username = String(
+        display_name=_("Superset Username"),
+        default="",
+        scope=Scope.settings,
+    )
+
+    superset_password = String(
+        display_name=_("Superset Password"),
+        default="",
+        scope=Scope.settings,
+    )
+
+    dashboard_uuid = String(
+        display_name=_("Dashboard UUID"),
+        default="1d6bf904-f53f-47fd-b1c9-6cd7e284d286",
+        scope=Scope.settings,
+    )
+
+    filters = List(
+        display_name=_("Filters"),
+        default=[],
         scope=Scope.settings,
     )
 
@@ -81,11 +119,28 @@ class SupersetXBlock(XBlock):
             "self": self,
             "show_survey": show_survey,
             "user": user,
+            "course": self.course_id,
         }
+
+        superset_config = getattr(settings, "SUPERSET_CONFIG", {})
+        context = update_context(
+            context=context,
+            superset_config={
+                "service_url": self.superset_internal_url,
+                "username": self.superset_username or superset_config.get("username"),
+                "password": self.superset_password or superset_config.get("password"),
+            },
+            dashboard_uuid=self.dashboard_uuid,
+            filters=self.filters,
+        )
+
+        if context.get("exception"):
+            raise Exception(context.get("exception"))
 
         frag = Fragment()
         frag.add_content(self.render_template("static/html/superset.html", context))
         frag.add_css(self.resource_string("static/css/superset.css"))
+        frag.add_javascript(self.resource_string("static/js/install_required.js"))
 
         # Add i18n js
         statici18n_js_url = self._get_statici18n_js_url()
@@ -95,7 +150,13 @@ class SupersetXBlock(XBlock):
             )
 
         frag.add_javascript(self.resource_string("static/js/superset.js"))
-        frag.initialize_js("SupersetXBlock")
+        frag.initialize_js("SupersetXBlock", json_args={
+            "superset_url": self.superset_url,
+            "superset_username": self.superset_username,
+            "superset_password": self.superset_password,
+            "dashboard_uuid": self.dashboard_uuid,
+            "superset_token": context.get("superset_token"),
+        })
         return frag
 
     def studio_view(self, context=None):
