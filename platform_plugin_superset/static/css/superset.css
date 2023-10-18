@@ -1,4 +1,4 @@
-#superset-embedded-container > iframe {
+.superset-embedded-container > iframe {
     height: 720px;
     width: 100%;
     display: block;

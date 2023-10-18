@@ -1,9 +1,12 @@
-function embedDashboard(dashboard_uuid, superset_url, superset_token) {
+function embedDashboard(dashboard_uuid, superset_url, superset_token, xblock_id) {
+  if (xblock_id === undefined){
+    xblock_id = "";
+  }
   window.supersetEmbeddedSdk
     .embedDashboard({
       id: dashboard_uuid, // given by the Superset embedding UI
       supersetDomain: superset_url, // your Superset instance
-      mountPoint: document.getElementById("superset-embedded-container"), // any html element that can contain an iframe
+      mountPoint: document.getElementById(`superset-embedded-container-${xblock_id}`), // any html element that can contain an iframe
       fetchGuestToken: () => superset_token, // function that returns a Promise with the guest token
       dashboardUiConfig: {
         // dashboard UI config: hideTitle, hideTab, hideChartControls, filters.visible, filters.expanded (optional)
@@ -25,5 +28,5 @@ function embedDashboard(dashboard_uuid, superset_url, superset_token) {
     });
 }
 if (window.dashboard_uuid !== undefined) {
-  embedDashboard(window.dashboard_uuid, window.superset_url, window.superset_token);
+  embedDashboard(window.dashboard_uuid, window.superset_url, window.superset_token, window.xblock_id);
 }

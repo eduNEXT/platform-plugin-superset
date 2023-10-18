@@ -3,9 +3,10 @@ function SupersetXBlock(runtime, element, context) {
   const dashboard_uuid = context.dashboard_uuid;
   const superset_url = context.superset_url;
   const superset_token = context.superset_token;
+  const xblock_id = context.xblock_id
 
   function initSuperset(supersetEmbeddedSdk) {
-    embedDashboard(dashboard_uuid, superset_url, superset_token);
+    embedDashboard(dashboard_uuid, superset_url, superset_token, xblock_id);
   }
 
   if (typeof require === "function") {

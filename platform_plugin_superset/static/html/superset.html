@@ -6,7 +6,7 @@
     <div>{{title}}</div>
 
     {% if dashboard_uuid %}
-    <div id="superset-embedded-container"></div>
+    <div class="superset-embedded-container" id="superset-embedded-container-{{xblock_id}}"></div>
     <script type="text/javascript">
         window.dashboard_uuid ="{{dashboard_uuid}}";
         window.superset_url = "{{superset_url}}";
