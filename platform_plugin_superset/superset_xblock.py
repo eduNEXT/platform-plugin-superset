@@ -36,7 +36,8 @@ class SupersetXBlock(XBlock):
     superset_internal_url = String(
         display_name=_("Superset URL"),
         help=_(
-            "Superset internal URL to generate authentication information. Contact with your Open edX operator for more information."
+            """Superset internal URL to generate authentication information.
+            Contact with your Open edX operator for more information."""
         ),
         default="http://superset:8088/",
         scope=Scope.settings,
@@ -74,9 +75,7 @@ class SupersetXBlock(XBlock):
 
     filters = List(
         display_name=_("Filters"),
-        help=_(
-            "Comma separated list of filters to use. E.g: org=edX, user=student."
-        ),
+        help=_("Comma separated list of filters to use. E.g: org=edX, user=student."),
         default=[],
         scope=Scope.settings,
     )
@@ -133,6 +132,7 @@ class SupersetXBlock(XBlock):
             "show_survey": show_survey,
             "user": user,
             "course": self.course_id,
+            "display_name": self.display_name,
         }
 
         superset_config = getattr(settings, "SUPERSET_CONFIG", {})
@@ -173,7 +173,7 @@ class SupersetXBlock(XBlock):
                 "superset_password": self.superset_password,
                 "dashboard_uuid": self.dashboard_uuid,
                 "superset_token": context.get("superset_token"),
-                "xblock_id": self.scope_ids.usage_id.block_id
+                "xblock_id": self.scope_ids.usage_id.block_id,
             },
         )
         return frag
