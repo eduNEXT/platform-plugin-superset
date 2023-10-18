@@ -17,8 +17,12 @@ TEMPLATE_ABSOLUTE_PATH = "/instructor_dashboard/"
 BLOCK_CATEGORY = "superset"
 
 
-def update_context(
-    context, superset_config={}, dashboard_uuid="", filters=[], user=None
+def update_context(  # pylint: disable=dangerous-default-value
+    context,
+    superset_config={},
+    dashboard_uuid="",
+    filters=[],
+    user=None,
 ):
     """
     Update context with superset token and dashboard id.

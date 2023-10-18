@@ -5,14 +5,12 @@ import logging
 from typing import Tuple
 
 import pkg_resources
-from django.utils import translation
 from django.conf import settings
+from django.utils import translation
 from web_fragments.fragment import Fragment
 from xblock.core import XBlock
 from xblock.fields import List, Scope, String
 from xblockutils.resources import ResourceLoader
-
-import json
 
 from platform_plugin_superset.extensions.filters import update_context
 from platform_plugin_superset.utils import _
@@ -37,9 +35,10 @@ class SupersetXBlock(XBlock):
 
     superset_internal_url = String(
         display_name=_("Superset URL"),
-        help=_("Superset internal URL to generate authentication information."
-               "Contact with your Open edX operator for more information."
-               ),
+        help=_(
+            "Superset internal URL to generate authentication information."
+            "Contact with your Open edX operator for more information."
+        ),
         default="http://superset:8088/",
         scope=Scope.settings,
     )
@@ -67,7 +66,9 @@ class SupersetXBlock(XBlock):
 
     dashboard_uuid = String(
         display_name=_("Dashboard UUID"),
-        help=_("The ID of the dashboard to embed. Available in the embed dashboard UI."),
+        help=_(
+            "The ID of the dashboard to embed. Available in the embed dashboard UI."
+        ),
         default="1d6bf904-f53f-47fd-b1c9-6cd7e284d286",
         scope=Scope.settings,
     )
@@ -161,13 +162,16 @@ class SupersetXBlock(XBlock):
             )
         frag.add_javascript(self.resource_string("static/js/embed_dashboard.js"))
         frag.add_javascript(self.resource_string("static/js/superset.js"))
-        frag.initialize_js("SupersetXBlock", json_args={
-            "superset_url": self.superset_url,
-            "superset_username": self.superset_username,
-            "superset_password": self.superset_password,
-            "dashboard_uuid": self.dashboard_uuid,
-            "superset_token": context.get("superset_token"),
-        })
+        frag.initialize_js(
+            "SupersetXBlock",
+            json_args={
+                "superset_url": self.superset_url,
+                "superset_username": self.superset_username,
+                "superset_password": self.superset_password,
+                "dashboard_uuid": self.dashboard_uuid,
+                "superset_token": context.get("superset_token"),
+            },
+        )
         return frag
 
     def studio_view(self, context=None):
@@ -182,13 +186,27 @@ class SupersetXBlock(XBlock):
             "superset_password": self.superset_password,
             "dashboard_uuid": self.dashboard_uuid,
             "filters": self.filters,
-            "display_name_field": self.fields["display_name"],
-            "superset_internal_url_field": self.fields["superset_internal_url"],
-            "superset_url_field": self.fields["superset_url"],
-            "superset_username_field": self.fields["superset_username"],
-            "superset_password_field": self.fields["superset_password"],
-            "dashboard_uuid_field": self.fields["dashboard_uuid"],
-            "filters_field": self.fields["filters"],
+            "display_name_field": self.fields[  # pylint: disable=unsubscriptable-object
+                "display_name"
+            ],
+            "superset_internal_url_field": self.fields[  # pylint: disable=unsubscriptable-object
+                "superset_internal_url"
+            ],
+            "superset_url_field": self.fields[  # pylint: disable=unsubscriptable-object
+                "superset_url"
+            ],
+            "superset_username_field": self.fields[  # pylint: disable=unsubscriptable-object
+                "superset_username"
+            ],
+            "superset_password_field": self.fields[  # pylint: disable=unsubscriptable-object
+                "superset_password"
+            ],
+            "dashboard_uuid_field": self.fields[  # pylint: disable=unsubscriptable-object
+                "dashboard_uuid"
+            ],
+            "filters_field": self.fields[  # pylint: disable=unsubscriptable-object
+                "filters"
+            ],
         }
 
         frag = Fragment()
