@@ -146,7 +146,16 @@ class AddSupersetTab(PipelineStep):
         frag = Fragment(html)
 
         frag.add_css(self.resource_string("static/css/superset.css"))
-        frag.add_javascript(self.resource_string("static/js/superset.js"))
+        frag.add_javascript(self.resource_string("static/js/embed_dashboard.js"))
+
+        frag.initialize_js(
+            "embedDashboard",
+            json_args={
+                "dashboard_id": dashboard_uuid,
+                "superset_url": context.get("superset_url"),
+                "superset_token": context.get("superset_token"),
+            },
+        )
 
         section_data = {
             "fragment": frag,

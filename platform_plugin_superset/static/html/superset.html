@@ -5,35 +5,13 @@
 <div class="email-notifier-instructor-wrapper" width="parent">
     <div>{{title}}</div>
 
-    {% if dashboard_id %}
-    <div id="superset-embedded-container">
-    </div>
+    {% if dashboard_uuid %}
+    <div id="superset-embedded-container"></div>
     <script type="text/javascript">
-            supersetEmbeddedSdk
-                .embedDashboard({
-                    id: "{{dashboard_id}}", // given by the Superset embedding UI
-                    supersetDomain: "{{superset_url}}", // your Superset instance
-                    mountPoint: document.getElementById("superset-embedded-container"), // any html element that can contain an iframe
-                    fetchGuestToken: () => "{{superset_token}}",
-                    dashboardUiConfig: {
-                        // dashboard UI config: hideTitle, hideTab, hideChartControls, filters.visible, filters.expanded (optional)
-                        hideTitle: true,
-                        filters: {
-                            expanded: false,
-                        },
-                        hideTab: true,
-                        hideChartControls: true,
-                        hideFilters: true,
-                    },
-                })
-                .then((dashboard) => {
-                    mountPoint = document.getElementById("superset-embedded-container");
-                    /*
-                    Perform extra operations on the dashboard object or the container
-                    when the dashboard is loaded
-                    */
-                });
-        </script>
+        window.dashboard_uuid ="{{dashboard_uuid}}";
+        window.superset_url = "{{superset_url}}";
+        window.superset_token = "{{superset_token}}";
+    </script>
     {% else %}
     <p>{% trans 'Superset is not configured properly. Please contact your system administrator.'%}</p>
     {% endif %}

@@ -148,7 +148,7 @@ class SupersetXBlock(XBlock):
             frag.add_javascript_url(
                 self.runtime.local_resource_url(self, statici18n_js_url)
             )
-
+        frag.add_javascript(self.resource_string("static/js/embed_dashboard.js"))
         frag.add_javascript(self.resource_string("static/js/superset.js"))
         frag.initialize_js("SupersetXBlock", json_args={
             "superset_url": self.superset_url,
