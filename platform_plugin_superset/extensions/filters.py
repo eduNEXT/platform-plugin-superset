@@ -142,6 +142,7 @@ class AddSupersetTab(PipelineStep):
         default_filters = [
             "org = '{course.org}'",
             "course_name = '{course.display_name}'",
+            "course_run = '{course.id.run}'"
         ]
 
         filters = default_filters + extra_filters_format
