@@ -11,7 +11,9 @@ from openedx_filters import PipelineStep
 from supersetapiclient.client import SupersetClient
 from web_fragments.fragment import Fragment
 
-os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
+if settings.DEBUG:
+    os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
+
 
 TEMPLATE_ABSOLUTE_PATH = "/instructor_dashboard/"
 BLOCK_CATEGORY = "superset"
@@ -142,7 +144,7 @@ class AddSupersetTab(PipelineStep):
         default_filters = [
             "org = '{course.org}'",
             "course_name = '{course.display_name}'",
-            "course_run = '{course.id.run}'"
+            "course_run = '{course.id.run}'",
         ]
 
         filters = default_filters + extra_filters_format
