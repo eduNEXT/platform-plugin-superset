@@ -75,7 +75,7 @@ class SupersetXBlock(XBlock):
 
     filters = List(
         display_name=_("Filters"),
-        help=_("""Semicolon separated list of filters to use. E.g: org="edX"; country in ("us", "co").
+        help=_("""Semicolon separated list of filters to use. E.g: org='edX'; country in ('us', 'co').
                The fields used here must be available on every dataset used by the dashboard.
                """),
         default=[],
@@ -185,14 +185,7 @@ class SupersetXBlock(XBlock):
         """
         Render the view shown to course authors.
         """
-        filters = (
-            str(self.filters)
-            #.replace("'", "")
-            .replace('"', "")
-            .replace("[", "")
-            .replace("]", "")
-            .strip()
-        )
+        filters = "; ".join(self.filters)
         context = {
             "display_name": self.display_name,
             "superset_internal_url": self.superset_internal_url,
