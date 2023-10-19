@@ -1,7 +1,5 @@
 function embedDashboard(dashboard_uuid, superset_url, superset_token, xblock_id) {
-  if (xblock_id === undefined){
-    xblock_id = "";
-  }
+  xblock_id = xblock_id || "";
   window.supersetEmbeddedSdk
     .embedDashboard({
       id: dashboard_uuid, // given by the Superset embedding UI
