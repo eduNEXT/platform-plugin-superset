@@ -12,8 +12,7 @@ from xblock.core import XBlock
 from xblock.fields import List, Scope, String
 from xblockutils.resources import ResourceLoader
 
-from platform_plugin_superset.extensions.filters import update_context
-from platform_plugin_superset.utils import _
+from platform_plugin_superset.utils import _, update_context
 
 log = logging.getLogger(__name__)
 loader = ResourceLoader(__name__)
@@ -75,9 +74,11 @@ class SupersetXBlock(XBlock):
 
     filters = List(
         display_name=_("Filters"),
-        help=_("""Semicolon separated list of filters to use. E.g: org='edX'; country in ('us', 'co').
+        help=_(
+            """Semicolon separated list of filters to use. E.g: org='edX'; country in ('us', 'co').
                The fields used here must be available on every dataset used by the dashboard.
-               """),
+               """
+        ),
         default=[],
         scope=Scope.settings,
     )

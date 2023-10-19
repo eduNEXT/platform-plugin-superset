@@ -14,5 +14,9 @@
     </script>
     {% else %}
     <p>{% trans 'Superset is not configured properly. Please contact your system administrator.'%}</p>
+
+    <p>
+        {{exception}}
+    </p>
     {% endif %}
 </div>
