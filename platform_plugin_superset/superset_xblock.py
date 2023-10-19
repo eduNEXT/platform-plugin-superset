@@ -75,7 +75,9 @@ class SupersetXBlock(XBlock):
 
     filters = List(
         display_name=_("Filters"),
-        help=_("Comma separated list of filters to use. E.g: org=edX, user=student."),
+        help=_("""Semicolon separated list of filters to use. E.g: org="edX"; country in ("us", "co").
+               The fields used here must be available on every dataset used by the dashboard.
+               """),
         default=[],
         scope=Scope.settings,
     )
@@ -185,7 +187,7 @@ class SupersetXBlock(XBlock):
         """
         filters = (
             str(self.filters)
-            .replace("'", "")
+            #.replace("'", "")
             .replace('"', "")
             .replace("[", "")
             .replace("]", "")
@@ -253,14 +255,9 @@ class SupersetXBlock(XBlock):
         filters = data.get("filters")
         self.filters = []
         if filters:
-            for rlsf in filters.split(","):
+            for rlsf in filters.split(";"):
                 rlsf = rlsf.strip()
-                try:
-                    field, value = rlsf.split("=")
-                    self.filters.append(f"{field}='{value}'")
-                except ValueError:
-                    # Handle cases of trailing commas
-                    pass
+                self.filters.append(rlsf)
 
     @staticmethod
     def get_fullname(user) -> Tuple[str, str]:
