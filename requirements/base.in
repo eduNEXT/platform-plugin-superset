@@ -2,4 +2,7 @@
 -c constraints.txt
 
 Django             # Web application framework
-
+openedx-filters
+web_fragments
+superset-api-client
+django_crum
