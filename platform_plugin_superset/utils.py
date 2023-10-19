@@ -2,8 +2,8 @@
 Utilities for platform_plugin_superset app.
 """
 
-import os
 import logging
+import os
 
 from crum import get_current_user
 from django.conf import settings
