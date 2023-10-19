@@ -120,20 +120,21 @@ class SupersetXBlock(XBlock):
         """
         return user.opt_attrs.get("edx-platform.anonymous_user_id")
 
-    def student_view(self, show_survey):
+    def student_view(self, context=None):
         """
         Render the view shown to students.
         """
         user_service = self.runtime.service(self, "user")
         user = user_service.get_current_user()
 
-        context = {
-            "self": self,
-            "show_survey": show_survey,
-            "user": user,
-            "course": self.course_id,
-            "display_name": self.display_name,
-        }
+        context.update(
+            {
+                "self": self,
+                "user": user,
+                "course": self.course_id,
+                "display_name": self.display_name,
+            }
+        )
 
         superset_config = getattr(settings, "SUPERSET_CONFIG", {})
         context = update_context(
