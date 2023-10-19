@@ -3,6 +3,7 @@ Utilities for platform_plugin_superset app.
 """
 
 import os
+import logging
 
 from crum import get_current_user
 from django.conf import settings
@@ -10,6 +11,9 @@ from supersetapiclient.client import SupersetClient
 
 if settings.DEBUG:
     os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
+
+
+logger = logging.getLogger(__name__)
 
 
 def _(text):
@@ -92,6 +96,7 @@ def generate_guest_token(user, course, superset_config, dashboard_uuid, filters)
             password=superset_password,
         )
     except Exception as exc:  # pylint: disable=broad-except
+        logger.error(exc)
         return None, exc
 
     formatted_filters = [filter.format(course=course, user=user) for filter in filters]
@@ -122,4 +127,5 @@ def generate_guest_token(user, course, superset_config, dashboard_uuid, filters)
 
         return token, dashboard_uuid
     except Exception as exc:  # pylint: disable=broad-except
+        logger.error(exc)
         return None, exc
