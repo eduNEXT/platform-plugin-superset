@@ -250,8 +250,8 @@ class SupersetXBlock(XBlock):
         self.superset_password = data.get("superset_password")
         self.dashboard_uuid = data.get("dashboard_uuid")
         filters = data.get("filters")
+        self.filters = []
         if filters:
-            self.filters = []
             for rlsf in filters.split(","):
                 rlsf = rlsf.strip()
                 try:
