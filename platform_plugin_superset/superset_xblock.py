@@ -75,7 +75,8 @@ class SupersetXBlock(XBlock):
     filters = List(
         display_name=_("Filters"),
         help=_(
-            """Semicolon separated list of filters to use. E.g: org='edX'; country in ('us', 'co').
+            """Semicolon separated list of SQL filters to apply to the
+               dashboard. E.g: org='edX'; country in ('us', 'co').
                The fields used here must be available on every dataset used by the dashboard.
                """
         ),
@@ -143,7 +144,8 @@ class SupersetXBlock(XBlock):
         context = update_context(
             context=context,
             superset_config={
-                "service_url": self.superset_internal_url or superset_config.get("service_url"),
+                "service_url": self.superset_internal_url
+                or superset_config.get("service_url"),
                 "username": self.superset_username or superset_config.get("username"),
                 "password": self.superset_password or superset_config.get("password"),
             },
