@@ -45,7 +45,7 @@ class SupersetXBlock(XBlock):
     superset_url = String(
         display_name=_("Superset URL"),
         help=_("Superset URL to embed the dashboard."),
-        default="http://superset.local.overhang.io:8088/",
+        default="",
         scope=Scope.settings,
     )
 
@@ -174,7 +174,7 @@ class SupersetXBlock(XBlock):
         frag.initialize_js(
             "SupersetXBlock",
             json_args={
-                "superset_url": self.superset_url,
+                "superset_url": self.superset_url or superset_config.get("host"),
                 "superset_username": self.superset_username,
                 "superset_password": self.superset_password,
                 "dashboard_uuid": self.dashboard_uuid,
