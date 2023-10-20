@@ -38,7 +38,7 @@ class SupersetXBlock(XBlock):
             """Superset internal URL to generate authentication information.
             Contact with your Open edX operator for more information."""
         ),
-        default="http://superset:8088/",
+        default="",
         scope=Scope.settings,
     )
 
@@ -143,7 +143,7 @@ class SupersetXBlock(XBlock):
         context = update_context(
             context=context,
             superset_config={
-                "service_url": self.superset_internal_url,
+                "service_url": self.superset_internal_url or superset_config.get("service_url"),
                 "username": self.superset_username or superset_config.get("username"),
                 "password": self.superset_password or superset_config.get("password"),
             },
