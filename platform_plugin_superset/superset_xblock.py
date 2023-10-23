@@ -32,16 +32,6 @@ class SupersetXBlock(XBlock):
         scope=Scope.settings,
     )
 
-    superset_internal_url = String(
-        display_name=_("Superset URL"),
-        help=_(
-            """Superset internal URL to generate authentication information.
-            Contact with your Open edX operator for more information."""
-        ),
-        default="",
-        scope=Scope.settings,
-    )
-
     superset_url = String(
         display_name=_("Superset URL"),
         help=_("Superset URL to embed the dashboard."),
@@ -144,8 +134,7 @@ class SupersetXBlock(XBlock):
         context = update_context(
             context=context,
             superset_config={
-                "service_url": self.superset_internal_url
-                or superset_config.get("service_url"),
+                "service_url": self.superset_url or superset_config.get("service_url"),
                 "username": self.superset_username or superset_config.get("username"),
                 "password": self.superset_password or superset_config.get("password"),
             },
@@ -191,7 +180,6 @@ class SupersetXBlock(XBlock):
         filters = "; ".join(self.filters)
         context = {
             "display_name": self.display_name,
-            "superset_internal_url": self.superset_internal_url,
             "superset_url": self.superset_url,
             "superset_username": self.superset_username,
             "superset_password": self.superset_password,
@@ -199,9 +187,6 @@ class SupersetXBlock(XBlock):
             "filters": filters,
             "display_name_field": self.fields[  # pylint: disable=unsubscriptable-object
                 "display_name"
-            ],
-            "superset_internal_url_field": self.fields[  # pylint: disable=unsubscriptable-object
-                "superset_internal_url"
             ],
             "superset_url_field": self.fields[  # pylint: disable=unsubscriptable-object
                 "superset_url"
@@ -243,7 +228,6 @@ class SupersetXBlock(XBlock):
         Save studio updates.
         """
         self.display_name = data.get("display_name")
-        self.superset_internal_url = data.get("superset_internal_url")
         self.superset_url = data.get("superset_url")
         self.superset_username = data.get("superset_username")
         self.superset_password = data.get("superset_password")
