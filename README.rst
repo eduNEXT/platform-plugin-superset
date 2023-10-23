@@ -1,29 +1,76 @@
 platform-plugin-superset
 #############################
 
-.. note::
-
-  This README was auto-generated. Maintainer: please review its contents and
-  update all relevant sections. Instructions to you are marked with
-  "PLACEHOLDER" or "TODO". Update or remove those sections, and remove this
-  note when you are done.
-
-|pypi-badge| |ci-badge| |codecov-badge| |doc-badge| |pyversions-badge|
-|license-badge| |status-badge|
+|ci-badge| |pyversions-badge| |license-badge| |status-badge|
 
 Purpose
 *******
 
-An Open edX plugin to integrate Superset with Open edX
+An Open edX plugin to integrate Superset with Open edX.
 
-TODO: The ``README.rst`` file should start with a brief description of the repository and its purpose.
-It should be described in the context of other repositories under the ``openedx``
-organization. It should make clear where this fits in to the overall Open edX
-codebase and should be oriented towards people who are new to the Open edX
-project.
+This plugin allows to integrate any Superset Dashboard into Open edX as course content
+and to integrate the Aspects Instructor Dashboard into the Open edX Instructor Dashboard.
 
 Getting Started
 ***************
+
+Install this plugin:
+
+.. code-block::
+
+  pip install git+https://github.com/eduNEXT/platform-plugin-superset.git@main
+
+If you have already configured your Aspects instance, you can skip the next step.
+
+Configure Superset Dashboard integration
+----------------------------------------
+
+1. In your tutor environment add the following inline plugin:
+
+.. code-block:: yaml
+
+    name: platform-plugin-superset
+    version: 0.1.0
+    patches:
+        openedx-common-settings: |
+         OPEN_EDX_FILTERS_CONFIG = {
+           "org.openedx.learning.instructor.dashboard.render.started.v1": {
+             "fail_silently": False,
+             "pipeline": [
+               "platform_plugin_superset.extensions.filters.AddSupersetTab",
+             ]
+           },
+         }
+
+        openedx-development-settings: |
+         SUPERSET_CONFIG = {
+             "service_url": "http://superset:{{ SUPERSET_PORT }}/",
+             "host": "{% if ENABLE_HTTPS %}https{% else %}http{% endif %}://{{ SUPERSET_HOST }}:{{ SUPERSET_PORT }}",
+             "username": "{{ SUPERSET_LMS_USERNAME }}",
+             "password": "{{ SUPERSET_LMS_PASSWORD }}",
+             "email": "{{ SUPERSET_LMS_EMAIL }}",
+         }
+
+        openedx-common-settings: |
+         SUPERSET_CONFIG = {
+             "service_url": "http://superset:{{ SUPERSET_PORT }}/",
+             "host": "{% if ENABLE_HTTPS %}https{% else %}http{% endif %}://{{ SUPERSET_HOST }}",
+             "username": "{{ SUPERSET_LMS_USERNAME }}",
+             "password": "{{ SUPERSET_LMS_PASSWORD }}",
+             "email": "{{ SUPERSET_LMS_EMAIL }}",
+         }
+
+2. Enable the tutor inline plugin in your tutor environment:
+
+.. code-block::
+
+      tutor plugins enable platform-plugin-superset
+
+3. Restart your tutor environment:
+
+.. code-block::
+
+      tutor local|dev restart
 
 Developing
 ==========
@@ -80,12 +127,7 @@ Every time you develop something in this repo
 Deploying
 =========
 
-TODO: How can a new user go about deploying this component? Is it just a few
-commands? Is there a larger how-to that should be linked here?
-
-PLACEHOLDER: For details on how to deploy this component, see the `deployment how-to`_
-
-.. _deployment how-to: https://docs.openedx.org/projects/platform-plugin-superset/how-tos/how-to-deploy-this-component.html
+Make sure yo follow the steps in the "Getting Started" section above.
 
 Getting Help
 ************
@@ -93,32 +135,19 @@ Getting Help
 Documentation
 =============
 
-PLACEHOLDER: Start by going through `the documentation`_.  If you need more help see below.
+By default the plugin will try to connect to the Superset instance running in the same
+environment as the Open edX instance. If you want to connect to a different Superset
+instance, you can configure the following settings in the ``tutor`` configuration file:
 
-.. _the documentation: https://docs.openedx.org/projects/platform-plugin-superset
+.. code-block:: python
 
-(TODO: `Set up documentation <https://openedx.atlassian.net/wiki/spaces/DOC/pages/21627535/Publish+Documentation+on+Read+the+Docs>`_)
-
-More Help
-=========
-
-If you're having trouble, we have discussion forums at
-https://discuss.openedx.org where you can connect with others in the
-community.
-
-Our real-time conversations are on Slack. You can request a `Slack
-invitation`_, then join our `community Slack workspace`_.
-
-For anything non-trivial, the best path is to open an issue in this
-repository with as many details about the issue you are facing as you
-can provide.
-
-https://github.com/eduNEXT/platform-plugin-superset/issues
-
-For more information about these options, see the `Getting Help <https://openedx.org/getting-help>`__ page.
-
-.. _Slack invitation: https://openedx.org/slack
-.. _community Slack workspace: https://openedx.slack.com/
+    SUPERSET_CONFIG = {
+        "service_url": "http://superset:{{ SUPERSET_PORT }}/",
+        "host": "{% if ENABLE_HTTPS %}https{% else %}http{% endif %}://{{ SUPERSET_HOST }}:{{ SUPERSET_PORT }}",
+        "username": "{{ SUPERSET_LMS_USERNAME }}",
+        "password": "{{ SUPERSET_LMS_PASSWORD }}",
+        "email": "{{ SUPERSET_LMS_EMAIL }}",
+    }
 
 License
 *******
@@ -160,23 +189,11 @@ file in this repo.
 Reporting Security Issues
 *************************
 
-Please do not report security issues in public. Please email security@openedx.org.
-
-.. |pypi-badge| image:: https://img.shields.io/pypi/v/platform-plugin-superset.svg
-    :target: https://pypi.python.org/pypi/platform-plugin-superset/
-    :alt: PyPI
+Please do not report security issues in public. Please email security@edunext.co.
 
 .. |ci-badge| image:: https://github.com/eduNEXT/platform-plugin-superset/workflows/Python%20CI/badge.svg?branch=main
     :target: https://github.com/eduNEXT/platform-plugin-superset/actions
     :alt: CI
-
-.. |codecov-badge| image:: https://codecov.io/github/eduNEXT/platform-plugin-superset/coverage.svg?branch=main
-    :target: https://codecov.io/github/eduNEXT/platform-plugin-superset?branch=main
-    :alt: Codecov
-
-.. |doc-badge| image:: https://readthedocs.org/projects/platform-plugin-superset/badge/?version=latest
-    :target: https://docs.openedx.org/projects/platform-plugin-superset
-    :alt: Documentation
 
 .. |pyversions-badge| image:: https://img.shields.io/pypi/pyversions/platform-plugin-superset.svg
     :target: https://pypi.python.org/pypi/platform-plugin-superset/
