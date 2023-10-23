@@ -130,7 +130,6 @@ class SupersetXBlock(XBlock):
             }
         )
 
-
         superset_config = getattr(settings, "SUPERSET_CONFIG", {})
 
         xblock_superset_config = {
@@ -150,7 +149,6 @@ class SupersetXBlock(XBlock):
             )
 
             context["xblock_id"] = self.scope_ids.usage_id.block_id
-
 
         frag = Fragment()
         frag.add_content(self.render_template("static/html/superset.html", context))

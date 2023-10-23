@@ -129,9 +129,6 @@ Deploying
 
 Make sure yo follow the steps in the "Getting Started" section above.
 
-Getting Help
-************
-
 Documentation
 =============
 
