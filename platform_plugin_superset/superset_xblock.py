@@ -130,22 +130,27 @@ class SupersetXBlock(XBlock):
             }
         )
 
+
         superset_config = getattr(settings, "SUPERSET_CONFIG", {})
-        context = update_context(
-            context=context,
-            superset_config={
-                "service_url": self.superset_url or superset_config.get("service_url"),
-                "username": self.superset_username or superset_config.get("username"),
-                "password": self.superset_password or superset_config.get("password"),
-            },
-            dashboard_uuid=self.dashboard_uuid,
-            filters=self.filters,
-        )
 
-        context["xblock_id"] = self.scope_ids.usage_id.block_id
+        xblock_superset_config = {
+            "username": self.superset_username or superset_config.get("username"),
+            "password": self.superset_password or superset_config.get("password"),
+        }
 
-        if context.get("exception"):
-            raise Exception(context.get("exception"))
+        if self.superset_url:
+            xblock_superset_config["service_url"] = self.superset_url
+
+        if self.dashboard_uuid:
+            context = update_context(
+                context=context,
+                superset_config=xblock_superset_config,
+                dashboard_uuid=self.dashboard_uuid,
+                filters=self.filters,
+            )
+
+            context["xblock_id"] = self.scope_ids.usage_id.block_id
+
 
         frag = Fragment()
         frag.add_content(self.render_template("static/html/superset.html", context))
@@ -180,7 +185,7 @@ class SupersetXBlock(XBlock):
         filters = "; ".join(self.filters)
         context = {
             "display_name": self.display_name,
-            "superset_url": self.superset_url or settings.SUPERSET_CONFIG.get("host", ""),
+            "superset_url": self.superset_url,
             "superset_username": self.superset_username,
             "superset_password": self.superset_password,
             "dashboard_uuid": self.dashboard_uuid,
