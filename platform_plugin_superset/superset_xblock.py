@@ -56,9 +56,9 @@ class SupersetXBlock(XBlock):
     dashboard_uuid = String(
         display_name=_("Dashboard UUID"),
         help=_(
-            "The ID of the dashboard to embed. Available in the embed dashboard UI."
+            "The ID of the dashboard to embed. Available in the Superset embed dashboard UI."
         ),
-        default="1d6bf904-f53f-47fd-b1c9-6cd7e284d286",
+        default="",
         scope=Scope.settings,
     )
 
