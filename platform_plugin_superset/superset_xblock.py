@@ -180,7 +180,7 @@ class SupersetXBlock(XBlock):
         filters = "; ".join(self.filters)
         context = {
             "display_name": self.display_name,
-            "superset_url": self.superset_url,
+            "superset_url": self.superset_url or settings.SUPERSET_CONFIG.get("host", ""),
             "superset_username": self.superset_username,
             "superset_password": self.superset_password,
             "dashboard_uuid": self.dashboard_uuid,
