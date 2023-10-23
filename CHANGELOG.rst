@@ -20,6 +20,6 @@ Unreleased
 **********************************************
 
 Added
-=====
+-----
 
 * First release on PyPI.

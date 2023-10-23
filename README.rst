@@ -23,7 +23,7 @@ Install this plugin:
 If you have already configured your Aspects instance, you can skip the next step.
 
 Configure Superset Dashboard integration
-----------------------------------------
+-----------------------------------------
 
 1. In your tutor environment add the following inline plugin:
 
@@ -71,6 +71,20 @@ Configure Superset Dashboard integration
 .. code-block::
 
       tutor local|dev restart
+
+Superset XBlock
+---------------
+1. In Studio, go to the advanced settings of the course where you want to add the Superset Dashboard.
+2. In the setting Advanced Module List add the following XBlock: 'superset'.
+3. Add the Superset XBlock to the course.
+4. In the Superset XBlock settings, edit the default values as needed:
+
+- Display Name: The name of the Superset Dashboard.
+- Superset URL: The URL of the Superset instance.
+- Superset Username: The username of the Superset user.
+- Superset Password: The password of the Superset user.
+- Filters: The list of SQL filters to apply to the Superset Dashboard. Keep in mind that all the datasets in your Dashboard must have the same filters column name.
+
 
 Developing
 ==========
