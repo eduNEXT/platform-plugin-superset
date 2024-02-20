@@ -13,7 +13,7 @@ function embedDashboard(dashboard_uuid, superset_url, superset_token, xblock_id)
           expanded: false,
         },
         hideTab: true,
-        hideChartControls: true,
+        hideChartControls: false,
         hideFilters: true,
       },
     })
