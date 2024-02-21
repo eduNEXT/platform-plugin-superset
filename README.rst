@@ -14,18 +14,10 @@ and to integrate the Aspects Instructor Dashboard into the Open edX Instructor D
 Getting Started
 ***************
 
-Install this plugin:
-
-.. code-block::
-
-  pip install git+https://github.com/eduNEXT/platform-plugin-superset.git@main
-
-If you have already configured your Aspects instance, you can skip the next step.
-
 Configure Superset Dashboard integration
 -----------------------------------------
 
-1. In your tutor environment add the following inline plugin:
+1. In your tutor environment add the following inline plugin (under ``$(tutor plugins printroot)``):
 
 .. code-block:: yaml
 
@@ -42,6 +34,7 @@ Configure Superset Dashboard integration
            },
          }
 
+        # Can skip these patches if you've already installed Aspects
         openedx-development-settings: |
          SUPERSET_CONFIG = {
              "service_url": "http://superset:{{ SUPERSET_PORT }}/",
@@ -66,11 +59,23 @@ Configure Superset Dashboard integration
 
       tutor plugins enable platform-plugin-superset
 
-3. Restart your tutor environment:
+3. Add this plugin to the LMS pip requirements:
 
 .. code-block::
 
-      tutor local|dev restart
+  tutor config save --append OPENEDX_EXTRA_PIP_REQUIREMENTS="git+https://github.com/eduNEXT/platform-plugin-superset.git@main"
+
+4. Rebuild your openedx image
+
+.. code-block::
+
+      # If running tutor local:
+      tutor images build openedx --no-cache
+      tutor local restart
+
+      # Or if running tutor dev:
+      tutor dev launch
+
 
 Superset XBlock
 ---------------
