@@ -85,9 +85,7 @@ Superset XBlock
 4. In the Superset XBlock settings, edit the default values as needed:
 
 - Display Name: The name of the Superset Dashboard.
-- Superset URL: The URL of the Superset instance.
-- Superset Username: The username of the Superset user.
-- Superset Password: The password of the Superset user.
+- Dashboard UUID: UUID of the Superset dashboard which has been enabled for embedding.
 - Filters: The list of SQL filters to apply to the Superset Dashboard. Keep in mind that all the datasets in your Dashboard must have the same filters column name.
 
 

@@ -5,10 +5,6 @@ function SupersetXBlock(runtime, element) {
       var handlerUrl = runtime.handlerUrl(element, 'studio_submit');
       var data = {
           display_name: $(element).find('input[name=superset_display_name]').val(),
-          superset_internal_url: $(element).find('input[name=superset_superset_internal_url]').val(),
-          superset_url: $(element).find('input[name=superset_superset_url]').val(),
-          superset_username: $(element).find('input[name=superset_superset_username]').val(),
-          superset_password: $(element).find('input[name=superset_superset_password]').val(),
           dashboard_uuid: $(element).find('input[name=superset_dashboard_uuid]').val(),
           filters: $(element).find('input[name=superset_filters]').val(),
       };

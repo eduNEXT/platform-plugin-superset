@@ -32,27 +32,6 @@ class SupersetXBlock(XBlock):
         scope=Scope.settings,
     )
 
-    superset_url = String(
-        display_name=_("Superset URL"),
-        help=_("Superset URL to embed the dashboard."),
-        default="",
-        scope=Scope.settings,
-    )
-
-    superset_username = String(
-        display_name=_("Superset Username"),
-        help=_("Superset Username"),
-        default="",
-        scope=Scope.settings,
-    )
-
-    superset_password = String(
-        display_name=_("Superset Password"),
-        help=_("Superset Password"),
-        default="",
-        scope=Scope.settings,
-    )
-
     dashboard_uuid = String(
         display_name=_("Dashboard UUID"),
         help=_(
@@ -114,6 +93,34 @@ class SupersetXBlock(XBlock):
         """
         return user.opt_attrs.get("edx-platform.anonymous_user_id")
 
+    def get_superset_config(self):
+        """
+        Returns a dict containing Superset connection details.
+
+        Dict will contain the following keys:
+
+        * service_url
+        * host
+        * username
+        * password
+        """
+        superset_config = getattr(settings, "SUPERSET_CONFIG", {})
+
+        # SupersetClient requires a trailing slash
+        service_url = superset_config.get("service_url", "http://superset:8088/")
+        if service_url and service_url[-1] != '/':
+            service_url += '/'
+        host = superset_config.get("host", "http://superset:8088/")
+        if host and host[-1] != '/':
+            host += '/'
+
+        return {
+            "username": superset_config.get("username"),
+            "password": superset_config.get("password"),
+            "host": host,
+            "service_url": service_url,
+        }
+
     def student_view(self, context=None):
         """
         Render the view shown to students.
@@ -130,20 +137,12 @@ class SupersetXBlock(XBlock):
             }
         )
 
-        superset_config = getattr(settings, "SUPERSET_CONFIG", {})
-
-        xblock_superset_config = {
-            "username": self.superset_username or superset_config.get("username"),
-            "password": self.superset_password or superset_config.get("password"),
-        }
-
-        if self.superset_url:
-            xblock_superset_config["service_url"] = self.superset_url
+        superset_config = self.get_superset_config()
 
         if self.dashboard_uuid:
             context = update_context(
                 context=context,
-                superset_config=xblock_superset_config,
+                superset_config=superset_config,
                 dashboard_uuid=self.dashboard_uuid,
                 filters=self.filters,
             )
@@ -166,9 +165,7 @@ class SupersetXBlock(XBlock):
         frag.initialize_js(
             "SupersetXBlock",
             json_args={
-                "superset_url": self.superset_url or superset_config.get("host"),
-                "superset_username": self.superset_username,
-                "superset_password": self.superset_password,
+                "superset_url": superset_config.get("service_url"),
                 "dashboard_uuid": self.dashboard_uuid,
                 "superset_token": context.get("superset_token"),
                 "xblock_id": self.scope_ids.usage_id.block_id,
@@ -178,27 +175,16 @@ class SupersetXBlock(XBlock):
 
     def studio_view(self, context=None):
         """
-        Render the view shown to course authors.
+        Render the view shown when editing this XBlock.
         """
+        superset_config = self.get_superset_config()
         filters = "; ".join(self.filters)
         context = {
             "display_name": self.display_name,
-            "superset_url": self.superset_url,
-            "superset_username": self.superset_username,
-            "superset_password": self.superset_password,
             "dashboard_uuid": self.dashboard_uuid,
             "filters": filters,
             "display_name_field": self.fields[  # pylint: disable=unsubscriptable-object
                 "display_name"
-            ],
-            "superset_url_field": self.fields[  # pylint: disable=unsubscriptable-object
-                "superset_url"
-            ],
-            "superset_username_field": self.fields[  # pylint: disable=unsubscriptable-object
-                "superset_username"
-            ],
-            "superset_password_field": self.fields[  # pylint: disable=unsubscriptable-object
-                "superset_password"
             ],
             "dashboard_uuid_field": self.fields[  # pylint: disable=unsubscriptable-object
                 "dashboard_uuid"
@@ -231,9 +217,6 @@ class SupersetXBlock(XBlock):
         Save studio updates.
         """
         self.display_name = data.get("display_name")
-        self.superset_url = data.get("superset_url")
-        self.superset_username = data.get("superset_username")
-        self.superset_password = data.get("superset_password")
         self.dashboard_uuid = data.get("dashboard_uuid")
         filters = data.get("filters")
         self.filters = []
