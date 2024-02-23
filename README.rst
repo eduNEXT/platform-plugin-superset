@@ -34,7 +34,6 @@ Configure Superset Dashboard integration
            },
          }
 
-        # Can skip these patches if you've already installed Aspects
         openedx-development-settings: |
          XBLOCK_SETTINGS = {
            "SupersetXBlock": {
@@ -42,6 +41,10 @@ Configure Superset Dashboard integration
              "host": "{% if ENABLE_HTTPS %}https{% else %}http{% endif %}://{{ SUPERSET_HOST }}:{{ SUPERSET_PORT }}",
              "username": "{{ SUPERSET_LMS_USERNAME }}",
              "password": "{{ SUPERSET_LMS_PASSWORD }}",
+             "instructor_dashboard": {
+               "dashboard_uuid": "1d6bf904-f53f-47fd-b1c9-6cd7e284d286",
+               "extra_filters": [],
+             }
            }
          }
 
@@ -52,6 +55,10 @@ Configure Superset Dashboard integration
              "host": "{% if ENABLE_HTTPS %}https{% else %}http{% endif %}://{{ SUPERSET_HOST }}",
              "username": "{{ SUPERSET_LMS_USERNAME }}",
              "password": "{{ SUPERSET_LMS_PASSWORD }}",
+             "instructor_dashboard": {
+               "dashboard_uuid": "1d6bf904-f53f-47fd-b1c9-6cd7e284d286",
+               "extra_filters": [],
+             }
            }
          }
 

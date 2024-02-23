@@ -8,6 +8,7 @@ from openedx_filters import PipelineStep
 from web_fragments.fragment import Fragment
 
 from platform_plugin_superset.utils import update_context
+from platform_plugin_superset.superset_xblock import SupersetXBlock
 
 TEMPLATE_ABSOLUTE_PATH = "/instructor_dashboard/"
 BLOCK_CATEGORY = "superset"
@@ -26,12 +27,10 @@ class AddSupersetTab(PipelineStep):
         """
         course = context["course"]
 
-        instructor_dashboard_config = getattr(
-            settings, "SUPERSET_INSTRUCTOR_DASHBOARD", {}
-        )
+        superset_config = settings.XBLOCK_SETTINGS.get(SupersetXBlock.block_settings_key, {})
+        instructor_dashboard_config = superset_config.get("instructor_dashboard", {})
         dashboard_uuid = instructor_dashboard_config.get("dashboard_uuid")
-
-        extra_filters_format = getattr(settings, "SUPERSET_EXTRA_FILTERS_FORMAT", [])
+        extra_filters_format = instructor_dashboard_config.get("extra_filters", [])
 
         default_filters = [
             "org = '{course.org}'",
