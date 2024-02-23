@@ -24,16 +24,6 @@ Configure Superset Dashboard integration
     name: platform-plugin-superset
     version: 0.1.0
     patches:
-        openedx-common-settings: |
-         OPEN_EDX_FILTERS_CONFIG = {
-           "org.openedx.learning.instructor.dashboard.render.started.v1": {
-             "fail_silently": False,
-             "pipeline": [
-               "platform_plugin_superset.extensions.filters.AddSupersetTab",
-             ]
-           },
-         }
-
         openedx-development-settings: |
          XBLOCK_SETTINGS = {
            "SupersetXBlock": {
@@ -49,6 +39,14 @@ Configure Superset Dashboard integration
          }
 
         openedx-common-settings: |
+         OPEN_EDX_FILTERS_CONFIG = {
+           "org.openedx.learning.instructor.dashboard.render.started.v1": {
+             "fail_silently": False,
+             "pipeline": [
+               "platform_plugin_superset.extensions.filters.AddSupersetTab",
+             ]
+           },
+         }
          XBLOCK_SETTINGS = {
            "SupersetXBlock": {
              "service_url": "{% if ENABLE_HTTPS %}https{% else %}http{% endif %}://{{ SUPERSET_HOST }}",
