@@ -36,21 +36,23 @@ Configure Superset Dashboard integration
 
         # Can skip these patches if you've already installed Aspects
         openedx-development-settings: |
-         SUPERSET_CONFIG = {
+         XBLOCK_SETTINGS = {
+           "SupersetXBlock": {
              "service_url": "http://superset:{{ SUPERSET_PORT }}/",
              "host": "{% if ENABLE_HTTPS %}https{% else %}http{% endif %}://{{ SUPERSET_HOST }}:{{ SUPERSET_PORT }}",
              "username": "{{ SUPERSET_LMS_USERNAME }}",
              "password": "{{ SUPERSET_LMS_PASSWORD }}",
-             "email": "{{ SUPERSET_LMS_EMAIL }}",
+           }
          }
 
         openedx-common-settings: |
-         SUPERSET_CONFIG = {
+         XBLOCK_SETTINGS = {
+           "SupersetXBlock": {
              "service_url": "http://superset:{{ SUPERSET_PORT }}/",
              "host": "{% if ENABLE_HTTPS %}https{% else %}http{% endif %}://{{ SUPERSET_HOST }}",
              "username": "{{ SUPERSET_LMS_USERNAME }}",
              "password": "{{ SUPERSET_LMS_PASSWORD }}",
-             "email": "{{ SUPERSET_LMS_EMAIL }}",
+           }
          }
 
 2. Enable the tutor inline plugin in your tutor environment:
@@ -160,7 +162,6 @@ instance, you can configure the following settings in the ``tutor`` configuratio
         "host": "{% if ENABLE_HTTPS %}https{% else %}http{% endif %}://{{ SUPERSET_HOST }}:{{ SUPERSET_PORT }}",
         "username": "{{ SUPERSET_LMS_USERNAME }}",
         "password": "{{ SUPERSET_LMS_PASSWORD }}",
-        "email": "{{ SUPERSET_LMS_EMAIL }}",
     }
 
 License

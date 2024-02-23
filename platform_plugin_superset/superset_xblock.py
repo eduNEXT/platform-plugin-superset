@@ -10,7 +10,8 @@ from django.utils import translation
 from web_fragments.fragment import Fragment
 from xblock.core import XBlock
 from xblock.fields import List, Scope, String
-from xblockutils.resources import ResourceLoader
+from xblock.utils.resources import ResourceLoader
+from xblock.utils.settings import XBlockWithSettingsMixin
 
 from platform_plugin_superset.utils import _, update_context
 
@@ -20,10 +21,13 @@ loader = ResourceLoader(__name__)
 
 @XBlock.wants("user")
 @XBlock.needs("i18n")
-class SupersetXBlock(XBlock):
+@XBlock.needs("settings")
+class SupersetXBlock(XBlockWithSettingsMixin, XBlock):
     """
     Superset XBlock provides a way to embed dashboards from Superset in a course.
     """
+
+    block_settings_key = 'SupersetXBlock'
 
     display_name = String(
         display_name=_("Display name"),
@@ -104,7 +108,7 @@ class SupersetXBlock(XBlock):
         * username
         * password
         """
-        superset_config = getattr(settings, "SUPERSET_CONFIG", {})
+        superset_config = self.get_xblock_settings({})
 
         # SupersetClient requires a trailing slash
         service_url = superset_config.get("service_url", "http://superset:8088/")
