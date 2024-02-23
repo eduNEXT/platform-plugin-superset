@@ -57,7 +57,7 @@ def update_context(  # pylint: disable=dangerous-default-value
             {
                 "superset_token": superset_token,
                 "dashboard_uuid": dashboard_uuid,
-                "superset_url": superset_config.get("host"),
+                "superset_url": superset_config.get("service_url"),
             }
         )
     else:
@@ -82,7 +82,7 @@ def generate_guest_token(user, course, superset_config, dashboard_uuid, filters)
         tuple: Superset guest token and dashboard id.
         or None, exception if Superset is missconfigured or cannot generate guest token.
     """
-    superset_internal_host = superset_config.get("host", superset_config.get("service_url"))
+    superset_internal_host = superset_config.get("internal_service_url", superset_config.get("service_url"))
     superset_username = superset_config.get("username")
     superset_password = superset_config.get("password")
 

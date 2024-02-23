@@ -104,7 +104,7 @@ class SupersetXBlock(XBlockWithSettingsMixin, XBlock):
         Dict will contain the following keys:
 
         * service_url
-        * host
+        * internal_service_url
         * username
         * password
         """
@@ -114,14 +114,14 @@ class SupersetXBlock(XBlockWithSettingsMixin, XBlock):
         service_url = superset_config.get("service_url", "http://superset:8088/")
         if service_url and service_url[-1] != '/':
             service_url += '/'
-        host = superset_config.get("host", "http://superset:8088/")
-        if host and host[-1] != '/':
-            host += '/'
+        internal_service_url = superset_config.get("internal_service_url", "http://superset:8088/")
+        if internal_service_url and internal_service_url[-1] != '/':
+            internal_service_url += '/'
 
         return {
             "username": superset_config.get("username"),
             "password": superset_config.get("password"),
-            "host": host,
+            "internal_service_url": internal_service_url,
             "service_url": service_url,
         }
 
@@ -168,12 +168,7 @@ class SupersetXBlock(XBlockWithSettingsMixin, XBlock):
         frag.add_javascript(self.resource_string("static/js/superset.js"))
         frag.initialize_js(
             "SupersetXBlock",
-            json_args={
-                "superset_url": superset_config.get("service_url"),
-                "dashboard_uuid": self.dashboard_uuid,
-                "superset_token": context.get("superset_token"),
-                "xblock_id": self.scope_ids.usage_id.block_id,
-            },
+            json_args=context,
         )
         return frag
 

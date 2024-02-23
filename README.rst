@@ -37,8 +37,8 @@ Configure Superset Dashboard integration
         openedx-development-settings: |
          XBLOCK_SETTINGS = {
            "SupersetXBlock": {
-             "service_url": "http://superset:{{ SUPERSET_PORT }}/",
-             "host": "{% if ENABLE_HTTPS %}https{% else %}http{% endif %}://{{ SUPERSET_HOST }}:{{ SUPERSET_PORT }}",
+             "service_url": "{% if ENABLE_HTTPS %}https{% else %}http{% endif %}://{{ SUPERSET_HOST }}:{{ SUPERSET_PORT }}",
+             "internal_service_url": "http://superset:{{ SUPERSET_PORT }}/",
              "username": "{{ SUPERSET_LMS_USERNAME }}",
              "password": "{{ SUPERSET_LMS_PASSWORD }}",
              "instructor_dashboard": {
@@ -51,8 +51,8 @@ Configure Superset Dashboard integration
         openedx-common-settings: |
          XBLOCK_SETTINGS = {
            "SupersetXBlock": {
-             "service_url": "http://superset:{{ SUPERSET_PORT }}/",
-             "host": "{% if ENABLE_HTTPS %}https{% else %}http{% endif %}://{{ SUPERSET_HOST }}",
+             "service_url": "{% if ENABLE_HTTPS %}https{% else %}http{% endif %}://{{ SUPERSET_HOST }}",
+             "internal_service_url": "http://superset:{{ SUPERSET_PORT }}/",
              "username": "{{ SUPERSET_LMS_USERNAME }}",
              "password": "{{ SUPERSET_LMS_PASSWORD }}",
              "instructor_dashboard": {
