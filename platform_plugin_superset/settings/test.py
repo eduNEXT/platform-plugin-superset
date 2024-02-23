@@ -5,7 +5,7 @@ https://docs.djangoproject.com/en/2.22/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.22/ref/settings/
 """
-
+from .common import *
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.22/howto/deployment/checklist/
