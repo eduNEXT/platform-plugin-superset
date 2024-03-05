@@ -89,7 +89,7 @@ class SupersetXBlock(XBlockWithSettingsMixin, XBlock):
         """
         Check if the user is a student.
         """
-        return user.opt_attrs.get("edx-platform.user_role") == "student"
+        return user.opt_attrs.get("edx-platform.user_role") == "Student"
 
     def anonymous_user_id(self, user) -> str:
         """
@@ -127,7 +127,7 @@ class SupersetXBlock(XBlockWithSettingsMixin, XBlock):
 
     def student_view(self, context=None):
         """
-        Render the view shown to students.
+        Render the view shown to users of this XBlock.
         """
         user_service = self.runtime.service(self, "user")
         user = user_service.get_current_user()
@@ -140,6 +140,12 @@ class SupersetXBlock(XBlockWithSettingsMixin, XBlock):
                 "display_name": self.display_name,
             }
         )
+
+        # Hide Superset content from learners
+        if self.user_is_student(user):
+            frag = Fragment()
+            frag.add_content(self.render_template("static/html/superset_student.html", context))
+            return frag
 
         superset_config = self.get_superset_config()
 
