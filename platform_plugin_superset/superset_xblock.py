@@ -109,21 +109,21 @@ class SupersetXBlock(XBlockWithSettingsMixin, XBlock):
         * password
         """
         superset_config = self.get_xblock_settings({})
-
-        # SupersetClient requires a trailing slash
-        service_url = superset_config.get("service_url", "http://superset:8088/")
-        if service_url and service_url[-1] != '/':
-            service_url += '/'
-        internal_service_url = superset_config.get("internal_service_url", "http://superset:8088/")
-        if internal_service_url and internal_service_url[-1] != '/':
-            internal_service_url += '/'
-
-        return {
+        cleaned_config = {
             "username": superset_config.get("username"),
             "password": superset_config.get("password"),
-            "internal_service_url": internal_service_url,
-            "service_url": service_url,
+            "internal_service_url": superset_config.get("internal_service_url"),
+            "service_url": superset_config.get("service_url"),
         }
+
+        # SupersetClient requires a trailing slash for service URLs.
+        for key in ('service_url', 'internal_service_url'):
+            url = cleaned_config.get(key, "http://superset:8088")
+            if url and url[-1] != '/':
+                url += '/'
+            cleaned_config[key] = url
+
+        return cleaned_config
 
     def student_view(self, context=None):
         """
