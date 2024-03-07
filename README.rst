@@ -23,7 +23,7 @@ Install this plugin:
 If you have already configured your Aspects instance, you can skip the next step.
 
 Configure Superset Dashboard integration
------------------------------------------
+========================================
 
 1. In your tutor environment add the following inline plugin:
 
@@ -73,7 +73,7 @@ Configure Superset Dashboard integration
       tutor local|dev restart
 
 Superset XBlock
----------------
+===============
 1. In Studio, go to the advanced settings of the course where you want to add the Superset Dashboard.
 2. In the setting Advanced Module List add the following XBlock: 'superset'.
 3. Add the Superset XBlock to the course.
