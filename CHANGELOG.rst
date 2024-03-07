@@ -19,10 +19,8 @@ Unreleased
 0.1.0 – 2023-10-23
 **********************************************
 
-- Add Instructor Dashboard integration.
-- Add Superset XBlock.
-
 Added
 -----
 
-* First release on PyPI.
+* Add Instructor Dashboard integration.
+* Add Superset XBlock.
